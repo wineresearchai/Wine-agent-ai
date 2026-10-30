@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="theme-color" content="#f7f3ea" />
+<meta name="apple-mobile-web-app-title" content="YWA">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="apple-touch-icon" href="./apple-touch-icon.PNG">
+<link rel="icon" type="image/png" href="./apple-touch-icon.PNG">
+<title>YWA · Build 5.1</title>
+<style>
+:root{--bg:#f7f3ea;--card:#fffdf8;--text:#2b261f;--muted:#746c61;--line:#ddd4c7;--accent:#2f5b45;--accent2:#c59b62;--red:#9b4d4a}
+*{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--text)}
+.app{max-width:980px;margin:0 auto;padding:20px 16px 54px}header{margin-bottom:18px}.brand{display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap}h1{font-size:2.3rem;margin:.1rem 0;letter-spacing:-.04em}.brand-sub{font-size:1rem;color:var(--muted);padding-bottom:.35rem}.sub{color:var(--muted);margin:.25rem 0 0}
+nav{display:flex;gap:8px;overflow-x:auto;padding-bottom:8px;margin-bottom:18px;scrollbar-width:none}nav::-webkit-scrollbar{display:none}nav button,.btn{border:1px solid var(--line);background:#fff;border-radius:12px;padding:.75rem .9rem;font-weight:700;color:var(--text);cursor:pointer;min-height:44px;white-space:nowrap}nav button.active,.btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.grid{display:grid;gap:14px}.grid2{grid-template-columns:repeat(2,minmax(0,1fr))}.grid3{grid-template-columns:repeat(3,minmax(0,1fr))}.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px}.small{font-size:.9rem;color:var(--muted)}.tiny{font-size:.78rem;color:var(--muted)}.kpi{font-size:1.8rem;font-weight:800}.section{display:none}.section.active{display:block}
+input,select,textarea{width:100%;padding:.75rem .8rem;border:1px solid var(--line);border-radius:12px;background:#fff;font-size:16px;color:var(--text)}label{display:block;font-weight:700;font-size:.88rem;margin-bottom:4px}.field{margin-bottom:12px}.tags{display:flex;flex-wrap:wrap;gap:7px}.tag{border:1px solid var(--line);border-radius:999px;padding:.35rem .6rem;font-size:.8rem;background:#fff}.wine{border-top:1px solid var(--line);padding:12px 0}.wine:first-child{border-top:0}.row{display:flex;justify-content:space-between;gap:14px;align-items:flex-start}.score{font-weight:800;font-size:1.15rem}.actions{display:flex;gap:8px;flex-wrap:wrap}.metric{display:flex;justify-content:space-between;gap:12px;margin:9px 0 5px}.bar{height:8px;background:#e7dfd3;border-radius:999px;overflow:hidden}.fill{height:100%;background:var(--accent2)}
+.status{font-size:.76rem;font-weight:800;border-radius:999px;padding:.3rem .55rem;display:inline-block}.status-hold{background:#eef3e9;color:#506144}.status-enter{background:#f8f0d9;color:#80661f}.status-now{background:#e6f1eb;color:#2f5b45}.status-soon{background:#fae9dc;color:#8a552f}.status-priority{background:#f4dddd;color:#853e3e}.qty{font-size:1.25rem;font-weight:800}.cave-card,.wish-card{border:1px solid var(--line);border-radius:14px;padding:13px;background:#fff}.empty{padding:24px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:14px}textarea{min-height:88px}footer{margin-top:28px;padding-top:18px;border-top:1px solid var(--line)}
+@media(max-width:720px){.grid2,.grid3{grid-template-columns:1fr}h1{font-size:2rem}}
+
+.bottle-row{display:grid;grid-template-columns:76px 1fr;gap:12px;align-items:start}
+.bottle-photo{width:76px;height:104px;border-radius:12px;border:1px solid var(--line);background:#f0eadf;object-fit:cover;display:block}
+.bottle-placeholder{width:76px;height:104px;border-radius:12px;border:1px dashed var(--line);background:linear-gradient(180deg,#fbf8f1,#eee6d8);display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:.7rem;text-align:center;padding:6px}
+.photo-preview{width:90px;height:120px;border:1px solid var(--line);border-radius:12px;object-fit:cover;background:#f0eadf;display:none;margin-top:8px}
+.learn-hero{background:linear-gradient(135deg,#eef2ea,#fff9ef);border:1px solid var(--line);border-radius:18px;padding:16px}
+.learn-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:14px}
+.viz-card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;overflow:hidden}
+.flavor-wheel{width:100%;max-width:420px;margin:4px auto;display:block}
+.structure-chart .track{height:10px;border-radius:999px;background:#e7dfd3;overflow:hidden;margin:5px 0 12px}
+.structure-chart .mark{height:100%;border-radius:999px;background:var(--accent)}
+.map-wrap{position:relative;border:1px solid var(--line);border-radius:14px;background:#f2eee5;padding:8px}
+.map-note{font-size:.72rem;color:var(--muted);margin-top:6px}
+.lesson-chip{display:inline-block;font-size:.72rem;padding:.28rem .5rem;border:1px solid var(--line);border-radius:999px;background:#fff;margin:0 4px 5px 0}
+@media(max-width:720px){.learn-grid{grid-template-columns:1fr}.bottle-row{grid-template-columns:68px 1fr}.bottle-photo,.bottle-placeholder{width:68px;height:94px}}
+
+
+.smart-scan{border:1px solid var(--line);border-radius:16px;padding:12px;background:#fbf8f1;margin-bottom:14px}
+.scan-head{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}
+.scan-status{font-size:.78rem;color:var(--muted);margin-top:7px}
+.scan-result{display:none;margin-top:10px;padding:10px;border-radius:12px;background:#fff;border:1px solid var(--line)}
+.scan-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.conf{font-size:.68rem;border-radius:999px;padding:.2rem .45rem;border:1px solid var(--line);margin-left:5px;white-space:nowrap}
+.conf-high{background:#e6f1eb;color:#2f5b45}.conf-med{background:#f8f0d9;color:#80661f}.conf-low{background:#f4dddd;color:#853e3e}
+.smart-note{font-size:.74rem;color:var(--muted);margin-top:7px}
+@media(max-width:720px){.scan-grid{grid-template-columns:1fr}}
+
+
+.scan-edit-grid{display:grid;grid-template-columns:1fr;gap:8px;margin-top:8px}
+.scan-edit-grid label{font-size:.78rem;color:var(--muted);font-weight:700}
+.scan-edit-grid input{margin-top:4px}
+.raw-ocr{display:none;white-space:pre-wrap;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.72rem;background:#f6f1e8;border:1px solid var(--line);border-radius:10px;padding:10px;margin-top:8px;max-height:180px;overflow:auto}
+.scan-tools{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+
+</style>
+</head>
+<body>
+<div class="app">
+<header><div class="brand"><h1>YWA</h1><div class="brand-sub">Your Wine Agent</div></div><p class="sub">A visual wine education, inventory, discovery, and tasting companion.</p></header>
+<nav>
+<button data-tab="home" class="active">Home</button><button data-tab="cave">Wine Cave</button><button data-tab="wines">My Wines</button><button data-tab="wishlist">Wish List</button><button data-tab="discover">Discover</button><button data-tab="learn">Learn</button><button data-tab="profile">Profile</button>
+</nav>
+<section id="home" class="section active">
+<div class="grid grid2"><div class="card"><div class="tiny">CURRENT PALATE HYPOTHESIS</div><h2 style="margin:.35rem 0">Tension over richness</h2><p class="small">Your early profile leans toward high-acid, mineral, savory, regionally expressive wines with restrained sweetness and moderate fruit.</p><div id="palateBars"></div></div><div class="card"><div class="tiny">WINE CAVE SNAPSHOT</div><h2 style="margin:.35rem 0">What should be opened next?</h2><div id="homeCave"></div></div></div>
+<div class="grid grid3" style="margin-top:14px"><div class="card"><div class="tiny">TASTINGS</div><div class="kpi" id="wineCount">0</div></div><div class="card"><div class="tiny">BOTTLES IN CAVE</div><div class="kpi" id="caveCount">0</div></div><div class="card"><div class="tiny">WISH LIST</div><div class="kpi" id="wishCount">0</div></div></div>
+</section>
+<section id="cave" class="section"><div class="grid grid2">
+<div class="card"><div class="tiny">LIVE INVENTORY</div><h2>The Wine Cave</h2><p class="small">Track what you physically own and sort it by drinking priority.</p>
+<div class="smart-scan">
+  <div class="scan-head">
+    <div><div class="tiny">SMART ADD</div><strong>Scan a bottle label</strong></div>
+    <label class="btn primary" style="display:inline-flex;align-items:center;cursor:pointer">📷 Scan label<input id="caveScanInput" type="file" accept="image/*" capture="environment" style="display:none"></label>
+  </div>
+  <div id="caveScanStatus" class="scan-status">Photo stays in your browser. OCR runs locally in the browser.</div>
+  <div id="caveScanResult" class="scan-result">
+    <div class="tiny">SUGGESTED DETAILS</div>
+    <div class="scan-edit-grid">
+      <label>Producer<input id="caveSugProducer"></label>
+      <label>Wine / cuvée<input id="caveSugWine"></label>
+      <label>Vintage<input id="caveSugVintage"></label>
+      <label>Region / appellation<input id="caveSugRegion"></label>
+      <label>Country<input id="caveSugCountry"></label>
+      <label>Grape<input id="caveSugGrape"></label>
+    </div>
+    <div class="scan-tools">
+      <button type="button" class="btn primary" id="caveApplyScan">Use these details</button>
+      <button type="button" class="btn" id="caveToggleRaw">What YWA read</button>
+      <button type="button" class="btn" id="caveClearScan">Clear scan</button>
+    </div>
+    <div id="caveRawOCR" class="raw-ocr"></div>
+    <div class="smart-note">Review before saving. Curved or decorative labels can still need correction.</div>
+  </div>
+</div>
+<form id="caveForm">
+<div class="field"><label>Wine</label><input id="cName" required placeholder="Producer + cuvée"></div><div class="grid grid2"><div class="field"><label>Vintage / base</label><input id="cVintage" placeholder="2021"></div><div class="field"><label>Quantity</label><input id="cQty" type="number" min="1" max="999" value="1"></div></div><div class="field"><label>Region</label><input id="cRegion" placeholder="Champagne, France"></div>
+<div class="grid grid2"><div class="field"><label>Storage location</label><select id="cLocation"><option>Cellar</option><option>Wine Fridge</option><option>Kitchen Fridge</option><option>Other</option></select></div><div class="field"><label>Rack / bin</label><input id="cBin" placeholder="Shelf 2"></div></div>
+<div class="grid grid2"><div class="field"><label>Purchase price ($)</label><input id="cPrice" type="number" min="0" step="0.01"></div><div class="field"><label>Window confidence</label><select id="cConfidence"><option>High</option><option selected>Medium</option><option>Low</option></select></div></div>
+<div class="tiny" style="margin:6px 0 8px">DRINKING WINDOW</div><div class="grid grid2"><div class="field"><label>Recommended start</label><input id="cStart" type="number" min="1900" max="2200" placeholder="2027"></div><div class="field"><label>Recommended end</label><input id="cEnd" type="number" min="1900" max="2200" placeholder="2034"></div><div class="field"><label>Best period start</label><input id="cBestStart" type="number" min="1900" max="2200" placeholder="2029"></div><div class="field"><label>Best period end</label><input id="cBestEnd" type="number" min="1900" max="2200" placeholder="2032"></div></div>
+
+<div class="field"><label>Bottle photo</label><input id="cPhoto" type="file" accept="image/*"><img id="cPhotoPreview" class="photo-preview" alt="Bottle photo preview"></div>
+<div class="field"><label>Notes</label><textarea id="cNote" placeholder="Serving, pairing, provenance, special occasion..."></textarea></div><button class="btn primary" type="submit">Add to Wine Cave</button></form></div>
+<div class="card"><div class="row"><div><div class="tiny">DRINKING PRIORITY</div><h2 style="margin:.25rem 0">Cave inventory</h2></div><select id="caveSort" style="width:auto"><option value="priority">Priority</option><option value="name">Name</option><option value="location">Location</option><option value="year">Window start</option></select></div><div id="caveSummary" class="tags" style="margin:10px 0 14px"></div><div id="caveList"></div></div>
+</div></section>
+<section id="wines" class="section"><div class="grid grid2"><div class="card"><h2>Log a tasting</h2>
+<div class="smart-scan">
+  <div class="scan-head">
+    <div><div class="tiny">SMART ADD</div><strong>Scan a bottle label</strong></div>
+    <label class="btn primary" style="display:inline-flex;align-items:center;cursor:pointer">📷 Scan label<input id="wineScanInput" type="file" accept="image/*" capture="environment" style="display:none"></label>
+  </div>
+  <div id="wineScanStatus" class="scan-status">Photo stays in your browser. OCR runs locally in the browser.</div>
+  <div id="wineScanResult" class="scan-result">
+    <div class="tiny">SUGGESTED DETAILS</div>
+    <div class="scan-edit-grid">
+      <label>Producer<input id="wineSugProducer"></label>
+      <label>Wine / cuvée<input id="wineSugWine"></label>
+      <label>Vintage<input id="wineSugVintage"></label>
+      <label>Region / appellation<input id="wineSugRegion"></label>
+      <label>Country<input id="wineSugCountry"></label>
+      <label>Grape<input id="wineSugGrape"></label>
+    </div>
+    <div class="scan-tools">
+      <button type="button" class="btn primary" id="wineApplyScan">Use these details</button>
+      <button type="button" class="btn" id="wineToggleRaw">What YWA read</button>
+      <button type="button" class="btn" id="wineClearScan">Clear scan</button>
+    </div>
+    <div id="wineRawOCR" class="raw-ocr"></div>
+    <div class="smart-note">Review before saving. Curved or decorative labels can still need correction.</div>
+  </div>
+</div>
+<form id="wineForm"><div class="field"><label>Wine</label><input id="name" required></div><div class="field"><label>Vintage / base</label><input id="vintage"></div><div class="field"><label>Region</label><input id="region"></div><div class="field"><label>Grape / blend</label><input id="grape"></div><div class="grid grid2"><div class="field"><label>Price ($)</label><input id="price" type="number" min="0" step="0.01"></div><div class="field"><label>Enjoyment (1–10)</label><input id="score" type="number" min="1" max="10" step="0.1" value="9"></div></div><div class="field"><label>Style</label><select id="style"><option>Sparkling</option><option>White</option><option>Red</option><option>Rosé</option><option>Sweet</option><option>Fortified</option></select></div><div class="field"><label>What stood out?</label><input id="traits" placeholder="mineral, saline, floral, lees, savory"></div>
+<div class="field"><label>Bottle photo</label><input id="winePhoto" type="file" accept="image/*"><img id="winePhotoPreview" class="photo-preview" alt="Bottle photo preview"></div>
+<div class="field"><label>One-sentence impression</label><textarea id="note"></textarea></div><div class="field"><label>Would buy again?</label><select id="rebuy"><option>Yes</option><option>Maybe</option><option>No</option></select></div><button class="btn primary" type="submit">Add tasting</button></form></div><div class="card"><h2 style="margin-top:0">My Wines</h2><p class="small">Your tasting history. Wine Cave is only what you currently own.</p><div id="wineList"></div></div></div></section>
+<section id="wishlist" class="section"><div class="grid grid2"><div class="card"><div class="tiny">BOTTLES TO HUNT</div><h2>Wish List</h2>
+<div class="smart-scan">
+  <div class="scan-head">
+    <div><div class="tiny">SMART ADD</div><strong>Scan a bottle label</strong></div>
+    <label class="btn primary" style="display:inline-flex;align-items:center;cursor:pointer">📷 Scan label<input id="wishScanInput" type="file" accept="image/*" capture="environment" style="display:none"></label>
+  </div>
+  <div id="wishScanStatus" class="scan-status">Photo stays in your browser. OCR runs locally in the browser.</div>
+  <div id="wishScanResult" class="scan-result">
+    <div class="tiny">SUGGESTED DETAILS</div>
+    <div class="scan-edit-grid">
+      <label>Producer<input id="wishSugProducer"></label>
+      <label>Wine / cuvée<input id="wishSugWine"></label>
+      <label>Vintage<input id="wishSugVintage"></label>
+      <label>Region / appellation<input id="wishSugRegion"></label>
+      <label>Country<input id="wishSugCountry"></label>
+      <label>Grape<input id="wishSugGrape"></label>
+    </div>
+    <div class="scan-tools">
+      <button type="button" class="btn primary" id="wishApplyScan">Use these details</button>
+      <button type="button" class="btn" id="wishToggleRaw">What YWA read</button>
+      <button type="button" class="btn" id="wishClearScan">Clear scan</button>
+    </div>
+    <div id="wishRawOCR" class="raw-ocr"></div>
+    <div class="smart-note">Review before saving. Curved or decorative labels can still need correction.</div>
+  </div>
+</div>
+<form id="wishForm"><div class="field"><label>Wine</label><input id="wName" required></div><div class="grid grid2"><div class="field"><label>Vintage</label><input id="wVintage"></div><div class="field"><label>Target price ($)</label><input id="wPrice" type="number" min="0" step="0.01"></div></div><div class="field"><label>Where to buy</label><input id="wStore" placeholder="Wine Library, Moore Brothers, winery..."></div><div class="field"><label>Bottle photo</label><input id="wishPhoto" type="file" accept="image/*"><img id="wishPhotoPreview" class="photo-preview" alt="Wish list bottle photo preview"></div><div class="field"><label>Why I want it</label><textarea id="wNote"></textarea></div><button class="btn primary" type="submit">Add to Wish List</button></form></div><div class="card"><h2 style="margin-top:0">Current Wish List</h2><p class="small">Tap ✓ Purchased to remove a bottle once you buy it.</p><div id="wishList"></div></div></div></section>
+<section id="discover" class="section"><div class="card"><div class="tiny">NEXT FRONTIERS</div><h2>Regions worth exploring</h2><div class="wine"><strong>Austria</strong><div class="small">Blaufränkisch, Grüner Veltliner, serious Sekt</div></div><div class="wine"><strong>Hungary</strong><div class="small">Dry Furmint and Tokaji beyond dessert wine</div></div><div class="wine"><strong>South Africa</strong><div class="small">Swartland, Chenin Blanc, restrained Pinotage</div></div><div class="wine"><strong>Georgia</strong><div class="small">Saperavi, qvevri whites, ancient wine traditions</div></div></div></section>
+
+<section id="learn" class="section">
+  <div class="learn-hero">
+    <div class="tiny">VISUAL WINE SCHOOL</div>
+    <h2 style="margin:.3rem 0">Learn wine by seeing relationships</h2>
+    <p class="small">Use structure, geography, flavor families and side-by-side comparison to turn bottles into retained knowledge.</p>
+    <span class="lesson-chip">Structure</span><span class="lesson-chip">Flavor</span><span class="lesson-chip">Geography</span><span class="lesson-chip">Comparisons</span><span class="lesson-chip">Blind tasting</span>
+  </div>
+
+  <div class="learn-grid">
+    <div class="viz-card">
+      <div class="tiny">FLAVOR FAMILIES</div>
+      <h3 style="margin:.35rem 0">A visual tasting wheel</h3>
+      <svg class="flavor-wheel" viewBox="0 0 420 420" role="img" aria-label="Simplified wine flavor wheel">
+        <circle cx="210" cy="210" r="190" fill="#f6efe2"/>
+        <path d="M210,210 L210,20 A190,190 0 0,1 374,115 Z" fill="#d7b06a" opacity=".72"/>
+        <path d="M210,210 L374,115 A190,190 0 0,1 374,305 Z" fill="#9c6b57" opacity=".62"/>
+        <path d="M210,210 L374,305 A190,190 0 0,1 210,400 Z" fill="#6f7f5f" opacity=".62"/>
+        <path d="M210,210 L210,400 A190,190 0 0,1 46,305 Z" fill="#65768a" opacity=".62"/>
+        <path d="M210,210 L46,305 A190,190 0 0,1 46,115 Z" fill="#a86b41" opacity=".55"/>
+        <path d="M210,210 L46,115 A190,190 0 0,1 210,20 Z" fill="#c98287" opacity=".55"/>
+        <circle cx="210" cy="210" r="72" fill="#fffdf8" stroke="#ddd4c7"/>
+        <text x="210" y="202" text-anchor="middle" font-size="16" font-weight="700" fill="#2b261f">WHAT DO</text>
+        <text x="210" y="222" text-anchor="middle" font-size="16" font-weight="700" fill="#2b261f">YOU NOTICE?</text>
+        <text x="276" y="70" text-anchor="middle" font-size="13">Orchard / Citrus</text>
+        <text x="350" y="215" text-anchor="middle" font-size="13">Earth / Spice</text>
+        <text x="278" y="356" text-anchor="middle" font-size="13">Herbal</text>
+        <text x="138" y="356" text-anchor="middle" font-size="13">Mineral / Saline</text>
+        <text x="69" y="215" text-anchor="middle" font-size="13">Oak / Lees</text>
+        <text x="137" y="70" text-anchor="middle" font-size="13">Floral / Red fruit</text>
+      </svg>
+      <p class="small">Start broad. Identifying a flavor family reliably is more useful than forcing an ultra-specific descriptor.</p>
+    </div>
+
+    <div class="viz-card">
+      <div class="tiny">STRUCTURE FIRST</div>
+      <h3 style="margin:.35rem 0">A Bérêche-style reference profile</h3>
+      <div class="structure-chart">
+        <div class="metric"><span>Acidity</span><span class="tiny">High</span></div><div class="track"><div class="mark" style="width:92%"></div></div>
+        <div class="metric"><span>Body</span><span class="tiny">Medium</span></div><div class="track"><div class="mark" style="width:58%"></div></div>
+        <div class="metric"><span>Fruit intensity</span><span class="tiny">Moderate</span></div><div class="track"><div class="mark" style="width:54%"></div></div>
+        <div class="metric"><span>Lees texture</span><span class="tiny">High</span></div><div class="track"><div class="mark" style="width:82%"></div></div>
+        <div class="metric"><span>Savory / mineral</span><span class="tiny">High</span></div><div class="track"><div class="mark" style="width:91%"></div></div>
+      </div>
+      <p class="small">Use your favorite wines as anchors. New bottles become easier to understand when you ask: more acidic? richer? fruitier? more oxidative?</p>
+    </div>
+
+    <div class="viz-card">
+      <div class="tiny">GEOGRAPHY</div>
+      <h3 style="margin:.35rem 0">Europe: your current learning corridor</h3>
+      <div class="map-wrap">
+        <svg viewBox="0 0 520 300" role="img" aria-label="Schematic map of European wine learning regions">
+          <path d="M68 72 L132 42 L198 56 L243 42 L300 58 L352 47 L404 72 L453 99 L438 136 L397 145 L379 183 L337 194 L315 235 L267 250 L232 224 L196 236 L168 205 L128 190 L108 150 L72 132 Z" fill="#e2d8c8" stroke="#bfb3a1" stroke-width="2"/>
+          <circle cx="165" cy="104" r="10" fill="#2f5b45"/><text x="178" y="108" font-size="12">Champagne</text>
+          <circle cx="303" cy="176" r="10" fill="#a86b41"/><text x="316" y="180" font-size="12">Trentino</text>
+          <circle cx="351" cy="224" r="10" fill="#c59b62"/><text x="364" y="228" font-size="12">Santorini</text>
+          <circle cx="103" cy="204" r="10" fill="#6f7f5f"/><text x="116" y="208" font-size="12">Bairrada</text>
+          <circle cx="245" cy="154" r="10" fill="#65768a"/><text x="258" y="158" font-size="12">Austria</text>
+          <circle cx="274" cy="134" r="10" fill="#9c6b57"/><text x="287" y="138" font-size="12">Hungary</text>
+        </svg>
+        <div class="map-note">Schematic / not to scale. It is a learning map, not a navigation map.</div>
+      </div>
+      <p class="small">Notice the arc: Atlantic Portugal → northern France → Alpine Europe → Mediterranean islands. Climate and geography help explain why structure changes.</p>
+    </div>
+
+    <div class="viz-card">
+      <div class="tiny">SPARKLING COMPARISON</div>
+      <h3 style="margin:.35rem 0">Three traditional-method reference points</h3>
+      <svg viewBox="0 0 520 280" role="img" aria-label="Comparison chart of Champagne Trentodoc and Cava">
+        <line x1="125" y1="45" x2="125" y2="240" stroke="#cfc5b7"/>
+        <line x1="255" y1="45" x2="255" y2="240" stroke="#cfc5b7"/>
+        <line x1="385" y1="45" x2="385" y2="240" stroke="#cfc5b7"/>
+        <text x="125" y="28" text-anchor="middle" font-size="14" font-weight="700">Champagne</text>
+        <text x="255" y="28" text-anchor="middle" font-size="14" font-weight="700">Trentodoc</text>
+        <text x="385" y="28" text-anchor="middle" font-size="14" font-weight="700">Cava</text>
+        <text x="18" y="72" font-size="12">Acid</text>
+        <text x="18" y="118" font-size="12">Lees</text>
+        <text x="18" y="164" font-size="12">Fruit</text>
+        <text x="18" y="210" font-size="12">Mineral</text>
+        <circle cx="125" cy="68" r="12" fill="#2f5b45"/><circle cx="255" cy="76" r="10" fill="#2f5b45"/><circle cx="385" cy="82" r="9" fill="#2f5b45"/>
+        <circle cx="125" cy="113" r="12" fill="#c59b62"/><circle cx="255" cy="120" r="10" fill="#c59b62"/><circle cx="385" cy="125" r="9" fill="#c59b62"/>
+        <circle cx="125" cy="165" r="8" fill="#a86b41"/><circle cx="255" cy="158" r="10" fill="#a86b41"/><circle cx="385" cy="153" r="11" fill="#a86b41"/>
+        <circle cx="125" cy="204" r="12" fill="#65768a"/><circle cx="255" cy="211" r="10" fill="#65768a"/><circle cx="385" cy="215" r="9" fill="#65768a"/>
+        <text x="125" y="261" text-anchor="middle" font-size="11">Benchmark</text>
+        <text x="255" y="261" text-anchor="middle" font-size="11">Alpine</text>
+        <text x="385" y="261" text-anchor="middle" font-size="11">Mediterranean</text>
+      </svg>
+      <p class="small">Illustrative style guide, not a scorecard. Producer, vintage and dosage can move each wine considerably.</p>
+    </div>
+  </div>
+
+  <div class="learn-grid">
+    <div class="card">
+      <div class="tiny">60-SECOND LESSON</div>
+      <h2 id="lessonTitle">Structure before flavor</h2>
+      <p id="lessonBody" class="small">Before naming fruit, identify acidity, tannin, body, alcohol, sweetness, and texture.</p>
+      <button class="btn" id="nextLesson">Next lesson</button>
+    </div>
+    <div class="card">
+      <div class="tiny">CURRICULUM</div>
+      <h2>Progress by concept</h2>
+      <div id="curriculum"></div>
+    </div>
+  </div>
+</section>
+<section id="profile" class="section"><div class="grid grid2"><div class="card"><div class="tiny">PALATE FINGERPRINT</div><h2>What your ratings suggest</h2><div id="profileBars"></div></div><div class="card"><div class="tiny">VALUE PROFILE</div><h2>Your buying sweet spot</h2><div class="small" id="valueText">Not enough data yet.</div></div></div></section>
+<footer><div class="tiny" style="margin-bottom:8px">DATA & BACKUPS</div><div class="actions"><button class="btn" id="exportBtn">Export backup</button><label class="btn" style="display:inline-flex;align-items:center;cursor:pointer">Import backup<input id="importFile" type="file" accept=".json" style="display:none"></label></div><p class="tiny" style="margin-top:10px">Your data is stored locally in this browser. Export a backup periodically.</p>
+<p class="tiny" style="margin-top:6px"><strong>YWA Build 5.1</strong></p></footer>
+</div>
+<script>
+function fileToCompressedDataURL(file,maxW=520,maxH=760,quality=.72){
+ return new Promise((resolve,reject)=>{
+  if(!file){resolve('');return}
+  if(!file.type || !file.type.startsWith('image/')){reject(new Error('Please choose an image file.'));return}
+  const reader=new FileReader();
+  reader.onload=()=>{
+   const img=new Image();
+   img.onload=()=>{
+    let w=img.width,h=img.height;
+    const scale=Math.min(1,maxW/w,maxH/h);
+    w=Math.max(1,Math.round(w*scale));h=Math.max(1,Math.round(h*scale));
+    const c=document.createElement('canvas');
+    c.width=w;c.height=h;
+    const ctx=c.getContext('2d');
+    ctx.drawImage(img,0,0,w,h);
+    resolve(c.toDataURL('image/jpeg',quality));
+   };
+   img.onerror=()=>reject(new Error('Could not read that image.'));
+   img.src=reader.result;
+  };
+  reader.onerror=()=>reject(new Error('Could not read that image.'));
+  reader.readAsDataURL(file);
+ });
+}
+
+const STATE_KEY='ywa-v2',OLD_KEY='steve-wine-agent-v1';
+const oldWines=JSON.parse(localStorage.getItem(OLD_KEY)||'null');
+let state=JSON.parse(localStorage.getItem(STATE_KEY)||'null')||{wines:Array.isArray(oldWines)?oldWines:[],cave:[],wishlist:[]};
+if(!Array.isArray(state.wines))state.wines=[];if(!Array.isArray(state.cave))state.cave=[];if(!Array.isArray(state.wishlist))state.wishlist=[];
+const tabs=[...document.querySelectorAll('nav button')];tabs.forEach(b=>b.addEventListener('click',()=>{tabs.forEach(x=>x.classList.remove('active'));b.classList.add('active');document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));document.getElementById(b.dataset.tab).classList.add('active')}));
+const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));const money=v=>'$'+Number(v||0).toFixed(0);const num=v=>{const x=Number(v);return Number.isFinite(x)?x:null};
+let pendingWinePhoto='', pendingCavePhoto='', pendingWishPhoto='';
+
+
+
+
+let tesseractPromise=null;
+async function ensureOCR(){
+ if(window.Tesseract) return window.Tesseract;
+ if(tesseractPromise) return tesseractPromise;
+ tesseractPromise=(async()=>await import('https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/+esm'))();
+ return tesseractPromise;
+}
+function normalizeOCRText(t){return String(t||'').replace(/\r/g,'\n').replace(/[ \t]+/g,' ').replace(/\n{2,}/g,'\n').trim()}
+function normalizeLoose(s){return String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,' ').trim()}
+async function preprocessVariants(file){
+ const data=await new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=reject;r.readAsDataURL(file)});
+ const img=await new Promise((resolve,reject)=>{const i=new Image();i.onload=()=>resolve(i);i.onerror=reject;i.src=data});
+ const maxW=1600, scale=Math.min(1,maxW/img.width), w=Math.round(img.width*scale), h=Math.round(img.height*scale);
+ function make(mode){
+  const c=document.createElement('canvas');c.width=w;c.height=h;const ctx=c.getContext('2d');ctx.drawImage(img,0,0,w,h);
+  const im=ctx.getImageData(0,0,w,h), d=im.data;
+  for(let p=0;p<d.length;p+=4){
+   const gray=.299*d[p]+.587*d[p+1]+.114*d[p+2];
+   if(mode==='gray'){d[p]=d[p+1]=d[p+2]=gray}
+   if(mode==='contrast'){let v=(gray-128)*1.8+128;v=Math.max(0,Math.min(255,v));d[p]=d[p+1]=d[p+2]=v}
+   if(mode==='threshold'){const v=gray>165?255:0;d[p]=d[p+1]=d[p+2]=v}
+  }
+  ctx.putImageData(im,0,0);return c.toDataURL('image/jpeg',.92)
+ }
+ return [{name:'original',src:data},{name:'grayscale',src:make('gray')},{name:'contrast',src:make('contrast')},{name:'threshold',src:make('threshold')}]
+}
+function fuzzyIncludes(text,target){
+ const a=normalizeLoose(text),b=normalizeLoose(target);if(!b)return false;
+ if(a.includes(b))return true;
+ return a.replace(/\s+/g,'').includes(b.replace(/\s+/g,''))
+}
+const GRAPES=['Cabernet Sauvignon','Chardonnay','Pinot Noir','Pinot Meunier','Meunier','Pinot Blanc','Baga','Bical','Assyrtiko','Furmint','Pinotage','Nebbiolo','Sangiovese','Merlot','Syrah','Shiraz','Riesling','Sauvignon Blanc','Chenin Blanc','Glera','Xinomavro','Blaufränkisch','Grüner Veltliner','Tempranillo','Garnacha','Mencía','Saperavi'];
+const REGIONS=['Oakville','Napa Valley','Champagne','Bairrada','Santorini','Trentino','Trentodoc','Burgundy','Bourgogne','Bordeaux','Rioja','Tuscany','Toscana','Piedmont','Piemonte','Etna','Mosel','Tokaji','Swartland','Sonoma','Douro','Dão','Rheingau','Loire','Alsace','Prosecco','Valdobbiadene','Franciacorta'];
+const COUNTRIES=['France','Italy','Portugal','Spain','Germany','Austria','Hungary','Greece','Georgia','Lebanon','South Africa','Argentina','Chile','United States','USA','Australia','New Zealand'];
+function bestDictionaryMatches(text,list){return list.filter(x=>fuzzyIncludes(text,x))}
+function pickVintage(text){const yrs=[...String(text).matchAll(/\b(19[5-9]\d|20[0-3]\d)\b/g)].map(m=>m[1]);return yrs[0]||''}
+function cleanCandidate(line){return line.replace(/[|\\_;]+/g,' ').replace(/\s{2,}/g,' ').trim()}
+function scoreLine(line){
+ const s=cleanCandidate(line),letters=(s.match(/[A-Za-z]/g)||[]).length;if(s.length<4||letters<3)return -99;
+ let score=letters;if(/winery|estate|domaine|chateau|abbey|cellars|vineyards/i.test(s))score+=12;
+ if(/\d{4}/.test(s))score-=8;if(/alcohol|volume|bottled|contains|imported|est\.?/i.test(s))score-=18;return score
+}
+function interpretWineText(text){
+ const lines=normalizeOCRText(text).split('\n').map(cleanCandidate).filter(Boolean), vintage=pickVintage(text);
+ const grapes=bestDictionaryMatches(text,GRAPES),regions=bestDictionaryMatches(text,REGIONS),countries=bestDictionaryMatches(text,COUNTRIES);
+ const known=[...grapes,...regions,...countries,vintage].filter(Boolean).map(normalizeLoose);
+ const candidates=lines.filter(l=>{const nl=normalizeLoose(l);return !known.some(k=>k&&nl.includes(k))&&!/^(est|alcohol|contains|bottled|product of)/i.test(l)}).sort((a,b)=>scoreLine(b)-scoreLine(a));
+ let producer=candidates[0]||'', wine=grapes[0]||candidates[1]||'';
+ return {producer,wine,vintage,region:regions.join(', '),country:countries[0]||'',grape:grapes.join(' / ')}
+}
+async function runSmartScan(file,prefix){
+ const status=document.getElementById(prefix+'ScanStatus'),result=document.getElementById(prefix+'ScanResult');
+ status.textContent='Preparing image…';result.style.display='none';
+ try{
+  const OCR=await ensureOCR(),variants=await preprocessVariants(file),reads=[];
+  for(let i=0;i<variants.length;i++){
+   const out=await OCR.recognize(variants[i].src,'eng',{logger:m=>{if(m.status==='recognizing text')status.textContent=`Reading label… pass ${i+1}/${variants.length} · ${Math.round((m.progress||0)*100)}%`}});
+   reads.push({name:variants[i].name,text:normalizeOCRText(out.data?.text||''),conf:Number(out.data?.confidence||0)})
+  }
+  reads.sort((a,b)=>b.conf-a.conf||b.text.length-a.text.length);
+  const combined=[...new Set(reads.map(r=>r.text).filter(Boolean))].join('\n'),data=interpretWineText(combined);
+  document.getElementById(prefix+'SugProducer').value=data.producer||'';
+  document.getElementById(prefix+'SugWine').value=data.wine||'';
+  document.getElementById(prefix+'SugVintage').value=data.vintage||'';
+  document.getElementById(prefix+'SugRegion').value=data.region||'';
+  document.getElementById(prefix+'SugCountry').value=data.country||'';
+  document.getElementById(prefix+'SugGrape').value=data.grape||'';
+  document.getElementById(prefix+'RawOCR').textContent=reads.map(r=>`[${r.name} · confidence ${Math.round(r.conf)}]\n${r.text}`).join('\n\n');
+  result.style.display='block';status.textContent='Scan complete. Review and correct anything that looks wrong.'
+ }catch(err){console.error(err);status.textContent='Automatic scan failed. You can still use the photo and enter details manually.'}
+}
+function editedScan(prefix){return {producer:document.getElementById(prefix+'SugProducer').value.trim(),wine:document.getElementById(prefix+'SugWine').value.trim(),vintage:document.getElementById(prefix+'SugVintage').value.trim(),region:document.getElementById(prefix+'SugRegion').value.trim(),country:document.getElementById(prefix+'SugCountry').value.trim(),grape:document.getElementById(prefix+'SugGrape').value.trim()}}
+function clearScan(prefix){
+ document.getElementById(prefix+'ScanResult').style.display='none';document.getElementById(prefix+'RawOCR').style.display='none';
+ document.getElementById(prefix+'ScanStatus').textContent='Photo stays in your browser. OCR runs locally in the browser.';document.getElementById(prefix+'ScanInput').value='';
+ ['Producer','Wine','Vintage','Region','Country','Grape'].forEach(k=>{const el=document.getElementById(prefix+'Sug'+k);if(el)el.value=''})
+}
+async function setPendingPhotoFromFile(file,target){
+ const data=await fileToCompressedDataURL(file);
+ if(target==='wine'){pendingWinePhoto=data;const p=document.getElementById('winePhotoPreview');p.src=data;p.style.display=data?'block':'none'}
+ if(target==='cave'){pendingCavePhoto=data;const p=document.getElementById('cPhotoPreview');p.src=data;p.style.display=data?'block':'none'}
+ if(target==='wish'){pendingWishPhoto=data;const p=document.getElementById('wishPhotoPreview');p.src=data;p.style.display=data?'block':'none'}
+}
+['wine','cave','wish'].forEach(prefix=>{
+ document.getElementById(prefix+'ScanInput').addEventListener('change',async e=>{const file=e.target.files[0];if(!file)return;try{await setPendingPhotoFromFile(file,prefix);await runSmartScan(file,prefix)}catch(err){alert(err.message||'Could not use that image.')}});
+ document.getElementById(prefix+'ClearScan').addEventListener('click',()=>clearScan(prefix));
+ document.getElementById(prefix+'ToggleRaw').addEventListener('click',()=>{const r=document.getElementById(prefix+'RawOCR');r.style.display=r.style.display==='block'?'none':'block'})
+});
+document.getElementById('wineApplyScan').addEventListener('click',()=>{const d=editedScan('wine');document.getElementById('name').value=[d.producer,d.wine].filter(Boolean).filter((v,i,a)=>a.indexOf(v)===i).join(' — ');document.getElementById('vintage').value=d.vintage||'';document.getElementById('region').value=[d.region,d.country].filter(Boolean).join(', ');document.getElementById('grape').value=d.grape||''});
+document.getElementById('caveApplyScan').addEventListener('click',()=>{const d=editedScan('cave');document.getElementById('cName').value=[d.producer,d.wine].filter(Boolean).filter((v,i,a)=>a.indexOf(v)===i).join(' — ');document.getElementById('cVintage').value=d.vintage||'';document.getElementById('cRegion').value=[d.region,d.country].filter(Boolean).join(', ')});
+document.getElementById('wishApplyScan').addEventListener('click',()=>{const d=editedScan('wish');document.getElementById('wName').value=[d.producer,d.wine].filter(Boolean).filter((v,i,a)=>a.indexOf(v)===i).join(' — ');document.getElementById('wVintage').value=d.vintage||''});
+document.getElementById('winePhoto').addEventListener('change',async e=>{
+ try{
+  pendingWinePhoto=await fileToCompressedDataURL(e.target.files[0]);
+  const p=document.getElementById('winePhotoPreview');p.src=pendingWinePhoto;p.style.display=pendingWinePhoto?'block':'none';
+ }catch(err){alert(err.message);pendingWinePhoto='';}
+});
+document.getElementById('cPhoto').addEventListener('change',async e=>{
+ try{
+  pendingCavePhoto=await fileToCompressedDataURL(e.target.files[0]);
+  const p=document.getElementById('cPhotoPreview');p.src=pendingCavePhoto;p.style.display=pendingCavePhoto?'block':'none';
+ }catch(err){alert(err.message);pendingCavePhoto='';}
+});
+
+
+document.getElementById('wishPhoto').addEventListener('change',async e=>{try{pendingWishPhoto=await fileToCompressedDataURL(e.target.files[0]);const p=document.getElementById('wishPhotoPreview');p.src=pendingWishPhoto;p.style.display=pendingWishPhoto?'block':'none'}catch(err){alert(err.message);pendingWishPhoto=''}});
+
+render();
+</script>
+</body>
+</html>
